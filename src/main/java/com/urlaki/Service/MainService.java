@@ -27,11 +27,10 @@ public class MainService {
 
     private static final long EXPIRATION_DAYS = 30;
 
-    public String URLShortener(String inputURL) {
+    public Urls URLShortener(String inputURL) {
         String canonicalURL = canonicalize(inputURL);
 
         return urlRepository.findByBigURL(canonicalURL)
-                .map(Urls::getShortURL)
                 .orElseGet(() -> {
                     BigInteger hashCode = hashFunction(canonicalURL);
                     String encoded = base62Encode(hashCode);
@@ -42,9 +41,7 @@ public class MainService {
                             .shortURL(URLCode)
                             .expiresAt(LocalDateTime.now().plusDays(EXPIRATION_DAYS))
                             .build();
-                    urlRepository.save(url);
-
-                    return URLCode;
+                    return urlRepository.save(url);
                 });
     }
 
