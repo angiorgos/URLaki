@@ -1,9 +1,12 @@
 package com.urlaki.Service;
 
 import com.urlaki.Repository.UrlRepository;
+import com.urlaki.exception.InvalidUrlException;
 import com.urlaki.model.Urls;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Optional;
 
@@ -54,5 +57,28 @@ public class MainServiceTest {
 
         assertEquals("abc12345", result.getShortURL(),
                 "Should return the already stored short URL");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "https://f",            // single-label host
+            "https://localhost",    // χωρίς TLD
+            "https://example.",     // trailing dot, κενό TLD
+            "https://-bad.com"      // label ξεκινά με παύλα
+    })
+    public void testURLShortener_ShouldRejectInvalidHost(String badURL) {
+        assertThrows(InvalidUrlException.class, () -> mainService.URLShortener(badURL),
+                "Should reject URL with invalid host: " + badURL);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "https://example.com",
+            "https://www.sub.domain.co.uk/path?q=1",
+            "https://93.184.216.34/page"
+    })
+    public void testURLShortener_ShouldAcceptValidHost(String goodURL) {
+        Urls result = mainService.URLShortener(goodURL);
+        assertNotNull(result.getShortURL());
     }
 }

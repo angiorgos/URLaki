@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,12 @@ public class MainService {
             "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     private static final long EXPIRATION_DAYS = 30;
+
+    private static final Pattern DOMAIN =
+            Pattern.compile("^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$");
+
+    private static final Pattern IPV4 =
+            Pattern.compile("^(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)$");
 
     public Urls URLShortener(String inputURL) {
         String canonicalURL = canonicalize(inputURL);
@@ -71,11 +78,15 @@ public class MainService {
         return sb.reverse().toString();
     }
 
+    private boolean isValidHost(String host) {
+        return DOMAIN.matcher(host).matches() || IPV4.matcher(host).matches();
+    }
+
     public String canonicalize(String inputURL) {
         try {
             URI uri = new URI(inputURL);
             String host = uri.getHost();
-            if (host == null) {
+            if (host == null || !isValidHost(host)) {
                 throw new InvalidUrlException(inputURL);
             }
             String lowerHost = host.toLowerCase();
