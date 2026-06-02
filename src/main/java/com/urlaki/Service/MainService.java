@@ -3,6 +3,7 @@ package com.urlaki.Service;
 
 import com.urlaki.Repository.UrlRepository;
 import com.urlaki.exception.InvalidUrlException;
+import com.urlaki.model.Urls;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,13 @@ public class MainService {
         String canonicalURL = canonicalize(inputURL);
         BigInteger hashCode = hashFunction(canonicalURL);
         String encoded = base62Encode(hashCode);
-        return encoded.substring(0, 8);
+
+        String URLCode = encoded.substring(0, 8);
+
+        Urls url = Urls.builder().bigURL(inputURL).shortURL(URLCode).build();
+        urlRepository.save(url);
+
+        return URLCode;
     }
 
 

@@ -13,6 +13,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Urls {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
