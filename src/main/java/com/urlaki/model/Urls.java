@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "urls")
@@ -30,5 +29,5 @@ public class Urls {
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private Date expiresAt;
+    private LocalDateTime expiresAt;
 }

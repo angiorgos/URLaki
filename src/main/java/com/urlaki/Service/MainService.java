@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,8 @@ public class MainService {
     private static final String BASE62 =
             "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+    private static final long EXPIRATION_DAYS = 30;
+
     public String URLShortener(String inputURL) {
         String canonicalURL = canonicalize(inputURL);
         BigInteger hashCode = hashFunction(canonicalURL);
@@ -31,7 +34,11 @@ public class MainService {
 
         String URLCode = encoded.substring(0, 8);
 
-        Urls url = Urls.builder().bigURL(inputURL).shortURL(URLCode).build();
+        Urls url = Urls.builder()
+                .bigURL(inputURL)
+                .shortURL(URLCode)
+                .expiresAt(LocalDateTime.now().plusDays(EXPIRATION_DAYS))
+                .build();
         urlRepository.save(url);
 
         return URLCode;
