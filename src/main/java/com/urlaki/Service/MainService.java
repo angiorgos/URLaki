@@ -29,19 +29,23 @@ public class MainService {
 
     public String URLShortener(String inputURL) {
         String canonicalURL = canonicalize(inputURL);
-        BigInteger hashCode = hashFunction(canonicalURL);
-        String encoded = base62Encode(hashCode);
 
-        String URLCode = encoded.substring(0, 8);
+        return urlRepository.findByBigURL(canonicalURL)
+                .map(Urls::getShortURL)
+                .orElseGet(() -> {
+                    BigInteger hashCode = hashFunction(canonicalURL);
+                    String encoded = base62Encode(hashCode);
+                    String URLCode = encoded.substring(0, 8);
 
-        Urls url = Urls.builder()
-                .bigURL(inputURL)
-                .shortURL(URLCode)
-                .expiresAt(LocalDateTime.now().plusDays(EXPIRATION_DAYS))
-                .build();
-        urlRepository.save(url);
+                    Urls url = Urls.builder()
+                            .bigURL(canonicalURL)
+                            .shortURL(URLCode)
+                            .expiresAt(LocalDateTime.now().plusDays(EXPIRATION_DAYS))
+                            .build();
+                    urlRepository.save(url);
 
-        return URLCode;
+                    return URLCode;
+                });
     }
 
 
