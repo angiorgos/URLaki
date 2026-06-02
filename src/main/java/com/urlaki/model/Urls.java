@@ -18,7 +18,7 @@ public class Urls {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 2048)
     private String bigURL;
 
     @Column(unique = true, nullable = false)

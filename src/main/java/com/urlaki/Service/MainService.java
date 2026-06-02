@@ -78,7 +78,10 @@ public class MainService {
         try {
             URI uri = new URI(inputURL);
             String host = uri.getHost();
-            String lowerHost = host == null ? null : host.toLowerCase();
+            if (host == null) {
+                throw new InvalidUrlException(inputURL);
+            }
+            String lowerHost = host.toLowerCase();
 
             URI canonical = new URI(
                     uri.getScheme() == null ? null : uri.getScheme().toLowerCase(),
