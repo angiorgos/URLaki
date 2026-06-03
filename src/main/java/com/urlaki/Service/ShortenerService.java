@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class MainService {
+public class ShortenerService {
     private final UrlRepository urlRepository;
 
     private static final String BASE62 =

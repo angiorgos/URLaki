@@ -2,7 +2,7 @@ package com.urlaki.Controller;
 
 import com.urlaki.DTO.URLRequest;
 import com.urlaki.DTO.URLResponse;
-import com.urlaki.Service.MainService;
+import com.urlaki.Service.ShortenerService;
 import com.urlaki.model.Urls;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class MainController {
 
-    private final MainService mainService;
+    private final ShortenerService shortenerService;
 
     @PostMapping("/request")
     public ResponseEntity<URLResponse> shortenURL(@Valid @RequestBody URLRequest request) {
-        Urls url = mainService.URLShortener(request.getInputURL());
+        Urls url = shortenerService.URLShortener(request.getInputURL());
         URLResponse response = new URLResponse(
                 url.getShortURL(),
                 url.getBigURL(),

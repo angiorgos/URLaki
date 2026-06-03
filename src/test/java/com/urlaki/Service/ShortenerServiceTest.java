@@ -15,16 +15,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MainServiceTest {
+public class ShortenerServiceTest {
 
-    private MainService mainService;
+    private ShortenerService shortenerService;
 
     private UrlRepository urlRepository;
 
     @BeforeEach
     public void setUp() {
         urlRepository = mock(UrlRepository.class);
-        mainService = new MainService(urlRepository);
+        shortenerService = new ShortenerService(urlRepository);
 
         // Νέο URL: δεν υπάρχει στη βάση, και το save γυρνάει πίσω ό,τι του δώσουμε
         when(urlRepository.findByBigURL(any())).thenReturn(Optional.empty());
@@ -35,7 +35,7 @@ public class MainServiceTest {
     public void testURLShortener_ShouldReturnValidShortURL() {
         String longURL = "https://www.example.com/some/very/long/url";
 
-        Urls result = mainService.URLShortener(longURL);
+        Urls result = shortenerService.URLShortener(longURL);
 
         assertNotNull(result, "Result should not be null");
         assertNotNull(result.getShortURL(), "Short URL should not be null");
@@ -53,7 +53,7 @@ public class MainServiceTest {
                 .build();
         when(urlRepository.findByBigURL("https://google.com")).thenReturn(Optional.of(existing));
 
-        Urls result = mainService.URLShortener(longURL);
+        Urls result = shortenerService.URLShortener(longURL);
 
         assertEquals("abc12345", result.getShortURL(),
                 "Should return the already stored short URL");
@@ -67,7 +67,7 @@ public class MainServiceTest {
             "https://-bad.com"      // label ξεκινά με παύλα
     })
     public void testURLShortener_ShouldRejectInvalidHost(String badURL) {
-        assertThrows(InvalidUrlException.class, () -> mainService.URLShortener(badURL),
+        assertThrows(InvalidUrlException.class, () -> shortenerService.URLShortener(badURL),
                 "Should reject URL with invalid host: " + badURL);
     }
 
@@ -78,7 +78,7 @@ public class MainServiceTest {
             "https://93.184.216.34/page"
     })
     public void testURLShortener_ShouldAcceptValidHost(String goodURL) {
-        Urls result = mainService.URLShortener(goodURL);
+        Urls result = shortenerService.URLShortener(goodURL);
         assertNotNull(result.getShortURL());
     }
 }
