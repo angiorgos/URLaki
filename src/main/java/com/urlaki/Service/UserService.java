@@ -17,7 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    User register(RegisterRequest registerRequest) {
+    public User register(RegisterRequest registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already in use");
         }
@@ -25,7 +25,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    User getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
     }
