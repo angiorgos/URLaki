@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "urls",
         uniqueConstraints = @UniqueConstraint(
                 name = "uk_owner_bigurl",
-                columnNames = {"user_id", "big_u_r_l"}))
+                columnNames = {"user_id", "big_url"}))
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Urls {
 
@@ -19,10 +19,10 @@ public class Urls {
     private Long id;
 
     @Column(nullable = false, length = 2048)
-    private String bigURL;
+    private String bigUrl;
 
     @Column(unique = true, nullable = false)
-    private String shortURL;
+    private String shortUrl;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
