@@ -109,4 +109,9 @@ public class ShortenerService {
             throw new InvalidUrlException(inputURL, e);
         }
     }
+
+    @Transactional(readOnly = true)
+    public java.util.List<Urls> getUrlsOf(User owner) {
+        return urlRepository.findByOwner(owner);
+    }
 }
