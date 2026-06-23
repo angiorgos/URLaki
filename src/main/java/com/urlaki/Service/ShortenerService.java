@@ -4,6 +4,7 @@ package com.urlaki.Service;
 import com.urlaki.Repository.UrlRepository;
 import com.urlaki.exception.InvalidUrlException;
 import com.urlaki.model.Urls;
+import com.urlaki.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,18 +35,20 @@ public class ShortenerService {
     private static final Pattern IPV4 =
             Pattern.compile("^(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)$");
 
-    public Urls URLShortener(String inputURL) {
+    public Urls URLShortener(String inputURL, User owner) {
         String canonicalURL = canonicalize(inputURL);
 
-        return urlRepository.findByBigURL(canonicalURL)
+        return urlRepository.findByOwnerAndBigUrl(owner, canonicalURL)   // ← per-user lookup
                 .orElseGet(() -> {
-                    BigInteger hashCode = hashFunction(canonicalURL);
+                    //unique hash per user on a link
+                    BigInteger hashCode = hashFunction(canonicalURL + ":" + owner.getId());
                     String encoded = base62Encode(hashCode);
                     String URLCode = encoded.substring(0, 8);
 
                     Urls url = Urls.builder()
-                            .bigURL(canonicalURL)
-                            .shortURL(URLCode)
+                            .bigUrl(canonicalURL)
+                            .shortUrl(URLCode)
+                            .owner(owner)
                             .expiresAt(LocalDateTime.now().plusDays(EXPIRATION_DAYS))
                             .build();
                     return urlRepository.save(url);

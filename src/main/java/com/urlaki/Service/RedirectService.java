@@ -14,12 +14,12 @@ public class RedirectService {
 
     private final UrlRepository urlRepository;
     public String getBigURL(String shortURL){
-        Urls url = urlRepository.findByShortURL(shortURL).orElseThrow(() -> new ShortUrlNotFoundException(shortURL));
+        Urls url = urlRepository.findByShortUrl(shortURL).orElseThrow(() -> new ShortUrlNotFoundException(shortURL));
 
         if (url.getExpiresAt().isBefore(java.time.LocalDateTime.now())){
             throw new ShortUrlExpiredException(shortURL);
         }
-        return url.getBigURL();
+        return url.getBigUrl();
     }
 
 }
